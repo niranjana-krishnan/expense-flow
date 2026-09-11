@@ -16,11 +16,14 @@ load_dotenv()
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        FRONTEND_URL,
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -28,6 +31,9 @@ app.add_middleware(
 )
 
 SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise RuntimeError("SECRET_KEY environment variable is not set")    
+
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24
 
